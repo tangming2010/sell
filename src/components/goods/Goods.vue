@@ -47,20 +47,25 @@
 			return {
 				classMap: [],
 				goods: [],
-				listHeight: [],
-				firstFlag: true
+				listHeight: []
 			};
 		},
 		methods: {
 			_initScroll() {
-				this.menuScroll = new BScroll(this.$refs.menuWrapper, {});
-				this.foodScroll = new BScroll(this.$refs.foodWrapper, {});
+				if (!this.menuScroll) {
+					this.menuScroll = new BScroll(this.$refs.menuWrapper, {});
+				} else {
+					this.menuScroll.reflesh();
+				}
+				if (!this.foodScroll) {
+					this.foodScroll = new BScroll(this.$refs.foodWrapper, {});
+				} else {
+					this.foodScroll.reflesh();
+				}
 			},
 			_calculateHeight() {
 				let foodWrapper = this.$refs.foodWrapper;
 				let foodList = foodWrapper.getElementsByClassName('food-list-hook');
-				console.info(foodList); // 异步的？打印[],展开后才发现有element
-				console.info(foodList.length); // 0？
 				let height = 0;
 				this.listHeight.push(height);
 				for (let i = 0; i < foodList.length; i++) {
@@ -68,22 +73,21 @@
 					height += item.clientHeight;
 					this.listHeight.push(height);
 				}
+				console.info(this.listHeight);
 			}
-		},
-		mounted() {
-			this.$nextTick(() => {
-				this._initScroll();
-				this._calculateHeight();
-			});
 		},
 		created() {
 			this.$http.get('/api/goods').then(
 				res => {
-		          let response = res.data;
-		          if (response.errno === ERR_OK) {
-		            this.goods = response.data;
-		          }
-		        },
+				        let response = res.data;
+				        if (response.errno === ERR_OK) {
+				        	this.goods = response.data;
+				        }
+				        this.$nextTick(() => {
+				        	this._initScroll();
+							this._calculateHeight();
+						});
+			        },
 		        err => {
 		          console.error(err);
 		        }

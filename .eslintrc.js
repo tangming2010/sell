@@ -22,6 +22,6 @@ module.exports = {
     'indent': 0,
     'no-tabs': 0,
     'space-before-function-paren': ['error', 'never'],
-    'no-mixed-spaces-and-tabs': ["error", "smart-tabs"]
+    'no-mixed-spaces-and-tabs': [0, false]
   }
 }
