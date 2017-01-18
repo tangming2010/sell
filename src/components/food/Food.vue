@@ -1,7 +1,7 @@
 <template>
 	<transition name="move">
 		<div class="food" v-show="showFlag"  ref="food">
-			<div class="food-content">
+			<div class="food-content" ref="foodContent">
 				<div class="image-header">
 					<img :src="food.image" />
 					<div class="back" @click="hide">
@@ -34,12 +34,30 @@
 					<h1 class="title">商品评价</h1>
 					<rating-select :select-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.ratings" @ratingTypeSelect="ratingTypeSelect" @contentToggle="contentToggle"></rating-select>
 				</div>
+				<div class="rating-wrapper">
+					<transition-group name="fade" tag="ul" v-show="food.ratings && food.ratings.length">
+						<li v-for="(rating,index) in food.ratings" class="rating-item border-1px" v-show="needShow(rating.rateType, rating.text)" key="index">
+							<div class="user">
+								<span class="name">{{rating.username}}</span>
+								<img class="avatar" width="12" height="12" :src="rating.avatar" />
+							</div>
+							<div class="time">{{rating.rateTime | formatDate}}</div>
+							<p class="text">
+								<span class="icon" :class="{'icon-thumb_up': rating.rateType === 0, 'icon-thumb_down': rating.rateType === 1}"></span>{{rating.text}}
+							</p>
+						</li>
+					</transition-group>
+					<div class="no-rating" v-show="!food.ratings || !food.ratings.length">
+						暂无评价
+					</div>
+				</div>
 			</div>
 		</div>
 	</transition>
 </template>
 
 <script type="text/javascript">
+	import {formateDate} from 'common/js/Date';
 	import BScroll from 'better-scroll';
 	import CartControl from 'components/cartcontrol/CartControl';
 	import Split from 'components/split/Split';
@@ -67,6 +85,12 @@
 				}
 			};
 		},
+		filters: {
+			formatDate(time) {
+				let date = new Date(time);
+				return formateDate(date, 'yyyy-MM-dd hh:mm:ss');
+			}
+		},
 		methods: {
 			show() {
 				this.showFlag = true;
@@ -92,13 +116,30 @@
 				this.$emit('cartAdd', event.target);
 				this.$set(this.food, 'count', 1);
 			},
+			_scrollToBottom() {
+				this.$nextTick(() => {
+					this.scroll.refresh();
+					let scrollHeight = this.$refs.food.offsetHeight - this.$refs.foodContent.offsetHeight;
+					this.scroll.scrollTo(0, scrollHeight, 200);
+				});
+			},
 			ratingTypeSelect(type) {
-				// this.selectType = type;
-				console.info(type);
+				this.selectType = type;
+				this._scrollToBottom();
 			},
 			contentToggle(toggle) {
-				// this.onlyContent = toggle;
-				console.info(toggle);
+				this.onlyContent = toggle;
+				this._scrollToBottom();
+			},
+			needShow(type, text) {
+				if (this.onlyContent && !text) {
+					return false;
+				}
+				if (this.selectType === ALL) {
+					return true;
+				} else {
+					return type === this.selectType;
+				}
 			}
 		},
 		components: {
@@ -109,7 +150,8 @@
 	};
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus" scoped>
+	@import "../../common/stylus/mixin"
 	.food
 		position: fixed
 		left: 0
@@ -213,5 +255,55 @@
 				font-size: 14px
 				font-weight: 700
 				color: rgb(7, 17, 27)
-
+		.rating-wrapper
+			padding: 0 18px
+			.fade-enter
+				opacity: 0
+				transform: translateY(30px);
+			.fade-enter-active, .fade-leave-active
+				transition: all 0.2s linear
+			.fade-leave-active
+				opacity: 0
+				transform: translateX(-30px)
+			.no-rating
+				padding: 16px 0
+				font-size: 12px
+				color: rgb(147, 153, 159)
+			.rating-item
+				position: relative
+				padding: 16px 0
+				border-1px(rgba(7, 17, 27, 0.1))
+				.user
+					position: absolute
+					right: 0
+					top: 16px
+					line-height: 12px
+					font-size: 0
+					.name
+						display: inline-block
+						vertical-align: top
+						margin-right: 6px
+						font-size: 10px
+						color: rgb(147, 153, 159)
+					.avatar
+						display: inline-block
+						border-radius: 50%
+				.time
+					margin-bottom: 6px
+					line-height: 12px
+					font-size: 10px
+					color: rgb(147, 153, 159)
+				.text
+					line-height: 16px
+					font-size: 12px
+					color: rgb(7, 17, 27)
+					.icon
+						display: inline-block
+						margin-right: 4px
+						line-height: 12px
+						font-size: 12px
+						&.icon-thumb_up
+							color: rgb(0, 160, 220)
+						&.icon-thumb_down
+							color: rgb(147, 153, 159)
 </style>

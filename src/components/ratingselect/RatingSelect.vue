@@ -1,12 +1,12 @@
 <template>
 	<div class="ratingselect">
 		<div class="rating-type border-1px">
-			<span class="block positive" :class="{'active': type === 2}" @click="select(2, $event)">{{desc.all}}<span class="count">{{ratings.length}}</span></span>
-			<span class="block positive" :class="{'active': type === 0}" @click="select(0, $event)">{{desc.positive}}<span class="count">{{positiveCount}}</span></span>
-			<span class="block negative" :class="{'active': type === 1}" @click="select(1, $event)">{{desc.negative}}<span class="count">{{negativeCount}}</span></span>
+			<span class="block positive" :class="{'active': selectType === 2}" @click="select(2, $event)">{{desc.all}}<span class="count">{{ratings.length}}</span></span>
+			<span class="block positive" :class="{'active': selectType === 0}" @click="select(0, $event)">{{desc.positive}}<span class="count">{{positiveCount}}</span></span>
+			<span class="block negative" :class="{'active': selectType === 1}" @click="select(1, $event)">{{desc.negative}}<span class="count">{{negativeCount}}</span></span>
 		</div>
 		<div class="switch" @click="toggleContent($event)">
-			<span class="icon-check_circle" :class="{'on': isOnlyContent}"></span>
+			<span class="icon-check_circle" :class="{'on': onlyContent}"></span>
 			<span class="text">只看有内容的评价</span>
 		</div>
 	</div>
@@ -31,7 +31,7 @@
 			},
 			onlyContent: {
 				type: Boolean,
-				default: false
+				default: true
 			},
 			desc: {
 				type: Object,
@@ -56,30 +56,18 @@
 				}).length;
 			}
 		},
-		data() {
-			return {
-				type: ALL,
-				isOnlyContent: true
-			};
-		},
-		created() {
-			this.type = this.selectType;
-			this.isOnlyContent = this.onlyContent;
-		},
 		methods: {
 			select(type, event) {
 				if (!event._constructed) {
 					return;
 				}
-				this.type = type;
 				this.$emit('ratingTypeSelect', type);
 			},
 			toggleContent(event) {
 				if (!event._constructed) {
 					return;
 				}
-				this.isOnlyContent = 	!this.isOnlyContent;
-				this.$emit('contentToggle', this.isOnlyContent);
+				this.$emit('contentToggle', !this.onlyContent);
 			}
 		}
 	};
