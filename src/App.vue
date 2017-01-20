@@ -12,26 +12,37 @@
         <router-link to="/seller">商家</router-link>
       </div>
     </div>
-    <router-view :seller="seller"></router-view>
+    <keep-alive>
+      <router-view :seller="seller"></router-view>
+    </keep-alive>
   </div>
 </template>
 
 <script>
   import Header from 'components/header/Header';
+  import {urlParse} from 'common/js/Util';
 
   const ERR_OK = 0;
   export default{
     data() {
       return {
-        seller: {}
+        seller: {
+          id: (() => {
+            let queryParam = urlParse();
+            return queryParam.id;
+          })()
+        }
       };
     },
     created() {
-      this.$http.get('/api/seller').then(
+      let id = this.seller.id;
+      this.$http.get(`/api/seller?id=${this.seller.id}`).then(
         res => {
           let response = res.data;
           if (response.errno === ERR_OK) {
             this.seller = response.data;
+            // this.seller = Object.assign({}, this.seller, response.data);
+            this.$set(this.seller, 'id', id);
           }
         },
         err => {

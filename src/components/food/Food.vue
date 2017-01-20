@@ -36,7 +36,7 @@
 				</div>
 				<div class="rating-wrapper">
 					<transition-group name="fade" tag="ul" v-show="food.ratings && food.ratings.length">
-						<li v-for="(rating,index) in food.ratings" class="rating-item border-1px" v-show="needShow(rating.rateType, rating.text)" key="index">
+						<li v-for="(rating,index) in food.ratings" class="rating-item border-1px" v-show="needShow(rating.rateType, rating.text)" :key="index">
 							<div class="user">
 								<span class="name">{{rating.username}}</span>
 								<img class="avatar" width="12" height="12" :src="rating.avatar" />

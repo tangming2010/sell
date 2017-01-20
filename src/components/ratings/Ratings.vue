@@ -28,7 +28,7 @@
 			<rating-select :select-type="selectType" :only-content="onlyContent" :ratings="ratings" @ratingTypeSelect="ratingTypeSelect" @contentToggle="contentToggle"></rating-select>
 			<div class="rating-wrapper">
 				<transition-group name="fade" tag="ul">
-					<li v-for="(rating, index) in ratings" class="rating-item border-1px" v-show="needShow(rating.rateType,rating.text)" key="index">
+					<li v-for="(rating, index) in ratings" class="rating-item border-1px" v-show="needShow(rating.rateType,rating.text)" :key="index">
 						<div class="avatar"><img :src="rating.avatar" width="28" height="28" /></div>
 						<div class="content">
 							<h1>{{rating.username}}</h1>
