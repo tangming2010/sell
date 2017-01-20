@@ -19,14 +19,13 @@
 				</div>
 			</div>
 			<div class="ball-container">
-				<transition-group name="drop" :css="false"
-					@before-enter="beforeEnter" 
-					@enter="enter" 
-					@after-enter="afterEnter">
-					<div v-for="(ball,index) in balls" v-show="ball.show" class="ball" :key="'ball'+index">
-						<div class="inner inner-hook"></div>
-					</div>
-				</transition-group>
+				<div v-for="ball in balls">
+					<transition name="drop" @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" :css="false">
+						<div v-show="ball.show" class="ball">
+							<div class="inner inner-hook"></div>
+						</div>
+					</transition>
+				</div>
 			</div>
 			<transition name="fold">
 				<div class="shopcart-list" v-show="listShow">
@@ -109,44 +108,40 @@
 				}
 			},
 			beforeEnter(el) {
-				let count = this.balls.length;
-				while (count--) {
-					let ball = this.balls[count];
-					if (ball.show) {
-						let rect = ball.el.getBoundingClientRect();
-						let x = rect.left - 32;
-						let y = -(window.innerHeight - rect.top - 22);
-						console.info(`x=${x},y=${y}`);
-						el.style.display = 'block';
-						console.info(`translate3d(0, ${y}px, 0)`);
-						el.style.webkitTransform = `translate3d(0, ${y}px, 0)`;
-						el.style.transform = `translate3d(0, ${y}px, 0)`;
-						let inner = el.getElementsByClassName('inner-hook')[0];
-						inner.style.webkitTransform = `translate3d(${x}px, 0, 0)`;
-						inner.style.transform = `translate3d(${x}px, 0, 0)`;
-					}
-				}
-			},
+		        let count = this.balls.length;
+		        while (count--) {
+		        	let ball = this.balls[count];
+		            if (ball.show) {
+		            	let rect = ball.el.getBoundingClientRect();
+		            	let x = rect.left - 32;
+		            	let y = -(window.innerHeight - rect.top - 22);
+		            	el.style.display = '';
+		            	el.style.webkitTransform = `translate3d(0,${y}px,0)`;
+		            	el.style.transform = `translate3d(0,${y}px,0)`;
+		            	let inner = el.getElementsByClassName('inner-hook')[0];
+		            	inner.style.webkitTransform = `translate3d(${x}px,0,0)`;
+		            	inner.style.transform = `translate3d(${x}px,0,0)`;
+		            }
+		        }
+		    },
 			enter(el, done) {
 				/* eslint-disable no-unused-vars */
 			    let rf = el.offsetHeight;
 			    this.$nextTick(() => {
-			    	el.style.display = 'block';
-					el.style.webkitTransform = 'translate3d(0, 0, 0)';
-					el.style.transform = 'translate3d(0, 0, 0)';
+			    	el.style.webkitTransform = 'translate3d(0,0,0)';
+					el.style.transform = 'translate3d(0,0,0)';
 					let inner = el.getElementsByClassName('inner-hook')[0];
-					inner.style.webkitTransform = 'translate3d(0, 0, 0)';
-					inner.style.transform = 'translate3d(0, 0, 0)';
+					inner.style.webkitTransform = 'translate3d(0,0,0)';
+					inner.style.transform = 'translate3d(0,0,0)';
 			    });
-				// done();
+				done();
 			},
 			afterEnter(el) {
-				let self = this;
 				setTimeout(() => {
-				    let ball = self.dropBalls.shift();
+					let ball = this.dropBalls.shift();
 				    if (ball) {
-				    	ball.show = false;
-				    	el.style.display = 'none';
+				        ball.show = false;
+				        el.style.display = 'none';
 				    }
 				}, 400);
 			}
@@ -324,8 +319,6 @@
 				bottom: 22px
 				z-index: 200
 				transition: all 0.4s cubic-bezier(0.49, -0.29, 0.75, 0.41)
-				&.drop-enter-active
-					transform: translate3d(0, 0, 0)
 				.inner
 					width: 16px
 					height: 16px
