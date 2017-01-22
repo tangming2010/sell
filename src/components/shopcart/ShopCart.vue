@@ -110,40 +110,39 @@
 			beforeEnter(el) {
 		        let count = this.balls.length;
 		        while (count--) {
-		        	let ball = this.balls[count];
-		            if (ball.show) {
-		            	let rect = ball.el.getBoundingClientRect();
-		            	let x = rect.left - 32;
-		            	let y = -(window.innerHeight - rect.top - 22);
-		            	el.style.display = '';
-		            	el.style.webkitTransform = `translate3d(0,${y}px,0)`;
-		            	el.style.transform = `translate3d(0,${y}px,0)`;
-		            	let inner = el.getElementsByClassName('inner-hook')[0];
-		            	inner.style.webkitTransform = `translate3d(${x}px,0,0)`;
-		            	inner.style.transform = `translate3d(${x}px,0,0)`;
-		            }
+		          let ball = this.balls[count];
+		          if (ball.show) {
+			            let rect = ball.el.getBoundingClientRect();
+			            let x = rect.left - 32;
+			            let y = -(window.innerHeight - rect.top - 22);
+			            el.style.display = '';
+			            el.style.webkitTransform = `translate3d(0,${y}px,0)`;
+			            el.style.transform = `translate3d(0,${y}px,0)`;
+			            let inner = el.getElementsByClassName('inner-hook')[0];
+			            inner.style.webkitTransform = `translate3d(${x}px,0,0)`;
+			            inner.style.transform = `translate3d(${x}px,0,0)`;
+		        	}
 		        }
 		    },
 			enter(el, done) {
 				/* eslint-disable no-unused-vars */
-			    let rf = el.offsetHeight;
-			    this.$nextTick(() => {
-			    	el.style.webkitTransform = 'translate3d(0,0,0)';
-					el.style.transform = 'translate3d(0,0,0)';
-					let inner = el.getElementsByClassName('inner-hook')[0];
-					inner.style.webkitTransform = 'translate3d(0,0,0)';
-					inner.style.transform = 'translate3d(0,0,0)';
-			    });
-				done();
+		        let rf = el.offsetHeight;
+		        this.$nextTick(() => {
+			        el.style.webkitTransform = 'translate3d(0,0,0)';
+			        el.style.transform = 'translate3d(0,0,0)';
+			        let inner = el.getElementsByClassName('inner-hook')[0];
+			        inner.style.webkitTransform = 'translate3d(0,0,0)';
+			        inner.style.transform = 'translate3d(0,0,0)';
+			        // 动画执行完成之后调用done方法
+			        el.addEventListener('transitionend', done);
+		        });
 			},
 			afterEnter(el) {
-				setTimeout(() => {
-					let ball = this.dropBalls.shift();
-				    if (ball) {
-				        ball.show = false;
-				        el.style.display = 'none';
-				    }
-				}, 400);
+				let ball = this.dropBalls.shift();
+		        if (ball) {
+		        	ball.show = false;
+		        	el.style.display = 'none';
+		        }
 			}
 		},
 		data() {
